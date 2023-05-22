@@ -22,20 +22,20 @@ defmodule Kodala.Desk.Proposal do
     defaults [:create, :read, :update, :destroy]
   end
 
-  # graphql do
-  #   type :proposal
+  graphql do
+    type :proposal
 
-  #   queries do
-  #     get :get_eprob, :read 
-  #     list :list_jobs, :read 
-  #   end
+    queries do
+      get :get_proposal, :read 
+      list :list_proposals, :read 
+    end
 
-  #   mutations do
-  #     create :create_job, :create
-  #     update :update_job, :update
-  #     destroy :destroy_job, :destroy
-  #   end
-  # end
+    mutations do
+      create :create_proposal, :create
+      update :update_proposal, :update
+      destroy :destroy_proposal, :destroy
+    end
+  end
 
   relationships do
     belongs_to :job, Kodala.Desk.Job do

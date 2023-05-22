@@ -29,20 +29,20 @@ defmodule Kodala.Desk.Agent do
     defaults [:create, :read, :update, :destroy]
   end
 
-  # graphql do
-  #   type :agent
+  graphql do
+    type :agent
 
-  #   queries do
-  #     get :get_job, :read 
-  #     list :list_jobs, :read 
-  #   end
+    queries do
+      get :get_agent, :read 
+      list :list_agents, :read 
+    end
 
-  #   mutations do
-  #     create :create_job, :create
-  #     update :update_job, :update
-  #     destroy :destroy_job, :destroy
-  #   end
-  # end
+    mutations do
+      create :create_agent, :create
+      update :update_agent, :update
+      destroy :destroy_agent, :destroy
+    end
+  end
 
   relationships do
     belongs_to :user, Kodala.Accounts.User do

@@ -20,6 +20,21 @@ defmodule Kodala.Desk.Company do
     defaults [:create, :read, :update, :destroy]
   end
 
+  graphql do
+    type :company
+
+    queries do
+      get :get_copmany, :read 
+      list :list_companies, :read 
+    end
+
+    mutations do
+      create :create_company, :create
+      update :update_company, :update
+      destroy :destroy_company, :destroy
+    end
+  end
+
   relationships do
     belongs_to :user, Kodala.Accounts.User do
       api Kodala.Accounts
@@ -27,7 +42,7 @@ defmodule Kodala.Desk.Company do
     end
     
     # has_many :websites, Kodala.Desk.Website
-    has_many :contracts, Kodala.Desk.Contract
+    # has_many :contracts, Kodala.Desk.Contract
   end
 
   postgres do
