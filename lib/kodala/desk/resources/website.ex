@@ -38,7 +38,7 @@ defmodule Kodala.Desk.Website do
   end
 
   relationships do
-    belongs_to :copmany, Kodala.Desk.Company do
+    belongs_to :company, Kodala.Desk.Company do
       allow_nil? false
     end
 

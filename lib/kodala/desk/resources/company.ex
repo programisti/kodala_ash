@@ -41,8 +41,8 @@ defmodule Kodala.Desk.Company do
       allow_nil? false
     end
     
-    # has_many :websites, Kodala.Desk.Website
-    # has_many :contracts, Kodala.Desk.Contract
+    has_many :websites, Kodala.Desk.Website
+    has_many :contracts, Kodala.Desk.Contract
   end
 
   postgres do

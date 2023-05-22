@@ -18,7 +18,7 @@ defmodule Kodala.Desk.Agent do
   
   code_interface do
     define_for Kodala.Desk
-    define :create, action: :create
+    define :create, action: :create, args: [:email, :password]
     define :read, action: :read
     define :update, action: :update
     define :destroy, action: :destroy
@@ -26,21 +26,42 @@ defmodule Kodala.Desk.Agent do
 
 
   actions do
-    defaults [:create, :read, :update, :destroy]
+    defaults [:read, :update, :destroy]
+    create :signup_agent do
+      argument :password, :string, allow_nil?: false
+      run fn input, context ->
+        IO.inspect(input)
+        IO.inspect(context, label: "contexta")
+        {:ok, ["123"]}
+      end
+
+    end
+    # create :create do
+    #   # By default all public attributes are accepted, but this should only take email
+    #   accept [:email, :password]
+    
+    #   # Accept additional input by adding arguments
+    #   argument :password, :string do
+    #     allow_nil? false
+    #   end
+    
+    #   argument :password_confirmation, :string do
+    #     allow_nil? false
+    #   end
+    
+    #   # Use the built in `confirm/2` validation
+    #   validate confirm(:password, :password_confirmation)
+    
+    #   # Call a custom change that will hash the password
+    #   change Kodala.Accounts.User.Changes.HashPassword
+    # end
   end
 
   graphql do
     type :agent
 
-    queries do
-      get :get_agent, :read 
-      list :list_agents, :read 
-    end
-
     mutations do
-      create :create_agent, :create
-      update :update_agent, :update
-      destroy :destroy_agent, :destroy
+      create :signup_agent, :signup_agent
     end
   end
 
