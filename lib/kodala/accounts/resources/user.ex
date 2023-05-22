@@ -1,7 +1,10 @@
 defmodule Kodala.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication, AshAdmin.Resource]
+    extensions: [AshAuthentication, AshAdmin.Resource],
+    authorizers: [
+      Ash.Policy.Authorizer
+    ]
 
   admin do
     actor? true
@@ -13,6 +16,10 @@ defmodule Kodala.Accounts.User do
     strategies do
       password :password do
         identity_field :email
+        hashed_password_field :hashed_password
+        sign_in_tokens_enabled? true
+        confirmation_required? false
+
       end
     end
 
@@ -30,6 +37,7 @@ defmodule Kodala.Accounts.User do
   end
 
   actions do
+    defaults [:create]
     read :read do
       primary? true
       pagination offset?: true
@@ -40,23 +48,19 @@ defmodule Kodala.Accounts.User do
     identity :unique_email, [:email]
   end
 
+  attributes do
+    uuid_primary_key :id
+
+    attribute :hashed_password, :string, private?: true, sensitive?: true
+    attribute :password, :string
+    attribute :email, :ci_string do
+      allow_nil? false
+    end
+    timestamps()
+  end
+
   postgres do
     table "users"
     repo Kodala.Repo
   end
-
-  attributes do
-    uuid_primary_key :id
-
-    attribute :email, :ci_string do
-      allow_nil? false
-    end
-
-    attribute :hashed_password, :string do
-      sensitive? true
-    end
-
-    timestamps()
-  end
-
 end

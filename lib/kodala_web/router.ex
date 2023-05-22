@@ -1,7 +1,6 @@
 defmodule KodalaWeb.Router do
   use KodalaWeb, :router
   use AshAuthentication.Phoenix.Router
-  import AshAuthentication.Phoenix.LiveSession
   import AshAdmin.Router
 
   pipeline :browser do
@@ -18,6 +17,7 @@ defmodule KodalaWeb.Router do
   end
 
   pipeline :graphql do
+    plug :get_actor_from_token
     plug AshGraphql.Plug
   end
   
@@ -28,6 +28,11 @@ defmodule KodalaWeb.Router do
 
   scope "/", KodalaWeb do
     pipe_through :browser
+
+    sign_in_route()
+    sign_out_route AuthController
+    auth_routes_for Kodala.Accounts.User, to: AuthController
+    reset_route []
 
     get "/", PageController, :index
   end
@@ -76,4 +81,14 @@ defmodule KodalaWeb.Router do
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
+
+  def get_actor_from_token(conn, _opts) do
+    with ["" <> token] <- get_req_header(conn, "authorization"),
+        {:ok, user, _claims} <- Kodala.Guardian.resource_from_token(token) do
+     conn
+     |> Ash.PlugHelpers.set_actor(user)
+   else
+   _ -> conn
+   end
+ end
 end

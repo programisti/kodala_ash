@@ -15,7 +15,8 @@ defmodule Kodala.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Kodala.PubSub},
       # Start the Endpoint (http/https)
-      KodalaWeb.Endpoint
+      KodalaWeb.Endpoint,
+      {AshAuthentication.Supervisor, otp_app: :kodala}
       # Start a worker by calling: Kodala.Worker.start_link(arg)
       # {Kodala.Worker, arg}
     ]

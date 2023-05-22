@@ -18,50 +18,49 @@ defmodule Kodala.Desk.Agent do
   
   code_interface do
     define_for Kodala.Desk
-    define :create, action: :create, args: [:email, :password]
     define :read, action: :read
     define :update, action: :update
     define :destroy, action: :destroy
+    define :create, action: :create
   end
 
 
   actions do
     defaults [:read, :update, :destroy]
-    create :signup_agent do
-      argument :password, :string, allow_nil?: false
-      run fn input, context ->
-        IO.inspect(input)
-        IO.inspect(context, label: "contexta")
-        {:ok, ["123"]}
+    create :create do
+      accept [:email]
+      argument :email, :string
+      argument :password, :string
+
+      change fn changeset, _ ->
+        IO.inspect(changeset)
+        email = Ash.Changeset.get_argument(changeset, :email)
+        password = Ash.Changeset.get_argument(changeset, :password)
+
+        Kodala.Accounts.User
+        |> Ash.Changeset.for_create(:create, %{email: email, password: password})
+        |> Kodala.Accounts.create!()
+
+        Kodala.Accounts.Agent
+        |> Ash.Changeset.for_create(:create, changeset.attributes)
+        |> Kodala.Desk.create!()
+
+        # validate confirm(:password, :password_confirmation)
+        # change Kodala.Accounts.User.Changes.HashPassword
       end
 
+      change AshAuthentication.GenerateTokenChange
+      upsert? true
+      upsert_identity :unique_email
     end
-    # create :create do
-    #   # By default all public attributes are accepted, but this should only take email
-    #   accept [:email, :password]
-    
-    #   # Accept additional input by adding arguments
-    #   argument :password, :string do
-    #     allow_nil? false
-    #   end
-    
-    #   argument :password_confirmation, :string do
-    #     allow_nil? false
-    #   end
-    
-    #   # Use the built in `confirm/2` validation
-    #   validate confirm(:password, :password_confirmation)
-    
-    #   # Call a custom change that will hash the password
-    #   change Kodala.Accounts.User.Changes.HashPassword
-    # end
+
   end
 
   graphql do
     type :agent
 
     mutations do
-      create :signup_agent, :signup_agent
+      create :signup_agent, :create
     end
   end
 
@@ -74,6 +73,7 @@ defmodule Kodala.Desk.Agent do
     has_many :proposals, Kodala.Desk.Proposal
     has_many :contracts, Kodala.Desk.Contract
   end
+  
 
   postgres do
     table "agents"

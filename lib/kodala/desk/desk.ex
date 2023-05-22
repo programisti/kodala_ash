@@ -9,9 +9,9 @@ defmodule Kodala.Desk do
     show? true
   end
   
-  
   graphql do
     authorize? false # Defaults to `true`, use this to disable authorization for the entire API (you probably only want this while prototyping)
+    root_level_errors? true
   end
 
   resources do
